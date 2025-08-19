@@ -7,7 +7,7 @@ from pymongo.collection import Collection
 from bson import ObjectId
 import os
 
-SECRET_KEY = os.environ.get("SECRET_KEY", "changeme")
+SECRET_KEY = os.environ["SECRET_KEY"]
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
