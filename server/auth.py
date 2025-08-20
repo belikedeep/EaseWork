@@ -14,7 +14,9 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 router = APIRouter()
 
-def get_user_collection(db):
+from main import db
+
+def get_user_collection(db_arg=None):
     return db["users"]
 
 class UserSignup(BaseModel):
@@ -39,8 +41,8 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 @router.post("/signup")
-def signup(user: UserSignup, db=Depends(lambda: __import__("server.main").main.db)):
-    users: Collection = get_user_collection(db)
+def signup(user: UserSignup):
+    users: Collection = get_user_collection()
     if users.find_one({"email": user.email}):
         raise HTTPException(status_code=400, detail="Email already registered")
     hashed_password = get_password_hash(user.password)
@@ -50,8 +52,8 @@ def signup(user: UserSignup, db=Depends(lambda: __import__("server.main").main.d
     return {"msg": "User created successfully"}
 
 @router.post("/login")
-def login(user: UserLogin, db=Depends(lambda: __import__("server.main").main.db)):
-    users: Collection = get_user_collection(db)
+def login(user: UserLogin):
+    users: Collection = get_user_collection()
     db_user = users.find_one({"email": user.email})
     if not db_user or not verify_password(user.password, db_user["password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")

@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
+from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 MONGODB_URI = os.environ["MONGODB_URI"]
@@ -14,6 +15,15 @@ from projects import router as projects_router
 from tasks import router as tasks_router
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(auth_router)
 app.include_router(profile_router)
 app.include_router(projects_router)
