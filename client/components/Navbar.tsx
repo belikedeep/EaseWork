@@ -4,7 +4,11 @@ import { useAuth } from "../store/auth";
 import { useState } from "react";
 import axios from "../utils/axios";
 
-export default function Navbar() {
+interface NavbarProps {
+    onProjectCreated?: () => void;
+}
+
+export default function Navbar({ onProjectCreated }: NavbarProps) {
     const logout = useAuth((s) => s.logout);
     const router = useRouter();
 
@@ -39,7 +43,7 @@ export default function Navbar() {
             setShowModal(false);
             setName("");
             setDescription("");
-            // Optionally, trigger a callback or state update here to refresh projects in the sidebar
+            if (onProjectCreated) onProjectCreated();
         } finally {
             setLoading(false);
         }

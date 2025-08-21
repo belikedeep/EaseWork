@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Navbar from "../../components/Navbar";
 import { useAuth } from "../../store/auth";
 import axios from "../../utils/axios";
@@ -24,7 +24,7 @@ export default function DashboardPage() {
     const [taskDesc, setTaskDesc] = useState("");
     const [creatingTask, setCreatingTask] = useState(false);
 
-    useEffect(() => {
+    const fetchProjects = useCallback(() => {
         if (!token) return;
         setLoadingProjects(true);
         axios
@@ -34,6 +34,10 @@ export default function DashboardPage() {
             .then((res) => setProjects(res.data))
             .finally(() => setLoadingProjects(false));
     }, [token]);
+
+    useEffect(() => {
+        fetchProjects();
+    }, [fetchProjects]);
 
     const handleSelectProject = (project: Project) => {
         setSelectedProject(null);
@@ -98,7 +102,7 @@ export default function DashboardPage() {
                 </div>
             </div>
             <div className="flex flex-col flex-1">
-                <Navbar />
+                <Navbar onProjectCreated={fetchProjects} />
                 <main className="flex-1 p-8">
                     {!selectedProject ? (
                         <div>
