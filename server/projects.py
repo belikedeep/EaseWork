@@ -22,17 +22,19 @@ class ProjectUpdate(BaseModel):
     members: Optional[list] = None
 
 @router.post("/projects", status_code=201)
-def create_project(project: ProjectCreate, db=Depends(lambda: __import__("server.main").main.db), current_user=Depends(get_current_user)):
+def create_project(project: ProjectCreate, db=Depends(lambda: __import__("main").db), current_user=Depends(get_current_user)):
     project_dict = project.dict()
     project_dict["ownerId"] = current_user["_id"]
     project_dict["members"] = [current_user["_id"]]
     project_dict["createdAt"] = datetime.datetime.utcnow()
     result = get_project_collection(db).insert_one(project_dict)
-    project_dict["_id"] = result.inserted_id
+    project_dict["_id"] = str(result.inserted_id)
+    project_dict["ownerId"] = str(project_dict["ownerId"])
+    project_dict["members"] = [str(m) for m in project_dict.get("members",[])]
     return project_dict
 
 @router.get("/projects", response_model=List[dict])
-def list_projects(db=Depends(lambda: __import__("server.main").main.db), current_user=Depends(get_current_user)):
+def list_projects(db=Depends(lambda: __import__("main").db), current_user=Depends(get_current_user)):
     projects = list(get_project_collection(db).find({"members": current_user["_id"]}))
     for p in projects:
         p["_id"] = str(p["_id"])
@@ -41,7 +43,7 @@ def list_projects(db=Depends(lambda: __import__("server.main").main.db), current
     return projects
 
 @router.get("/projects/{project_id}")
-def get_project(project_id: str, db=Depends(lambda: __import__("server.main").main.db), current_user=Depends(get_current_user)):
+def get_project(project_id: str, db=Depends(lambda: __import__("main").db), current_user=Depends(get_current_user)):
     project = get_project_collection(db).find_one({"_id": ObjectId(project_id), "members": current_user["_id"]})
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
@@ -51,7 +53,7 @@ def get_project(project_id: str, db=Depends(lambda: __import__("server.main").ma
     return project
 
 @router.put("/projects/{project_id}")
-def update_project(project_id: str, update: ProjectUpdate, db=Depends(lambda: __import__("server.main").main.db), current_user=Depends(get_current_user)):
+def update_project(project_id: str, update: ProjectUpdate, db=Depends(lambda: __import__("main").db), current_user=Depends(get_current_user)):
     project = get_project_collection(db).find_one({"_id": ObjectId(project_id), "ownerId": current_user["_id"]})
     if not project:
         raise HTTPException(status_code=404, detail="Project not found or not owner")
@@ -66,7 +68,7 @@ def update_project(project_id: str, update: ProjectUpdate, db=Depends(lambda: __
     return project
 
 @router.delete("/projects/{project_id}", status_code=204)
-def delete_project(project_id: str, db=Depends(lambda: __import__("server.main").main.db), current_user=Depends(get_current_user)):
+def delete_project(project_id: str, db=Depends(lambda: __import__("main").db), current_user=Depends(get_current_user)):
     project = get_project_collection(db).find_one({"_id": ObjectId(project_id), "ownerId": current_user["_id"]})
     if not project:
         raise HTTPException(status_code=404, detail="Project not found or not owner")

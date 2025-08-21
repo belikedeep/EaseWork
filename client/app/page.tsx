@@ -17,7 +17,7 @@ export default function LoginPage() {
     setError("");
     try {
       const res = await api.post("/login", { email, password });
-      setToken(res.data.token);
+      setToken(res.data.access_token);
       router.push("/dashboard");
     } catch (err: any) {
       setError(err?.response?.data?.detail || "Login failed");

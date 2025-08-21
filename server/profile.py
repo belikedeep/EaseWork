@@ -15,7 +15,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 def get_user_collection(db):
     return db["users"]
 
-def get_current_user(token: str = Depends(oauth2_scheme), db=Depends(lambda: __import__("server.main").main.db)):
+def get_current_user(token: str = Depends(oauth2_scheme), db=Depends(lambda: __import__("main").db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -44,7 +44,7 @@ def view_profile(current_user=Depends(get_current_user)):
     return user
 
 @router.put("/profile")
-def edit_profile(update: ProfileUpdate, db=Depends(lambda: __import__("server.main").main.db), current_user=Depends(get_current_user)):
+def edit_profile(update: ProfileUpdate, db=Depends(lambda: __import__("main").db), current_user=Depends(get_current_user)):
     update_data = {k: v for k, v in update.dict().items() if v is not None}
     if not update_data:
         raise HTTPException(status_code=400, detail="No data to update")
