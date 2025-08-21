@@ -49,13 +49,6 @@ The frontend will be available at [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## Features
-
-- **Single-page Dashboard:** Projects and project details (with tasks) are managed on one page. The sidebar lists all projects and auto-refreshes after creating a new project.
-- **Create Projects/Tasks:** Use the "Create new project" button in the navbar and "Create new task" button in the project details.
-- **Next.js API Proxy:** All frontend API calls use `/api` and are proxied to the backend (see `client/next.config.ts`). No CORS issues.
-- **Auth Persistence:** Login tokens are stored in localStorage and used for all authenticated requests.
-
 ## Troubleshooting
 
 - If you see CORS errors, ensure you are using the `/api` prefix for all frontend API calls and that the Next.js proxy is configured.
