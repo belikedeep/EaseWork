@@ -52,7 +52,6 @@ export default function DashboardPage() {
     }, [token]);
 
     const handleSelectProject = (project: Project) => {
-        setSelectedProject(null);
         setLoadingProject(true);
         axios
             .get(`/projects/${project._id}`, {
