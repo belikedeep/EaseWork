@@ -2,6 +2,14 @@ from pydantic import BaseModel, EmailStr, Field
 from typing import List, Optional, Any
 from bson import ObjectId
 
+from enum import Enum
+
+class TaskStatus(str, Enum):
+    TODO = "todo"
+    IN_PROGRESS = "in_progress"
+    REVIEW = "review"
+    DONE = "done"
+
 class PyObjectId(ObjectId):
     @classmethod
     def __get_validators__(cls):
@@ -33,7 +41,7 @@ class Task(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id")
     title: str
     description: Optional[str] = None
-    status: str
+    status: TaskStatus
     deadline: Optional[str] = None
     projectId: PyObjectId
     assignedTo: Optional[PyObjectId] = None

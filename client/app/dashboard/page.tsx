@@ -22,6 +22,7 @@ export default function DashboardPage() {
     const [showTaskModal, setShowTaskModal] = useState(false);
     const [taskName, setTaskName] = useState("");
     const [taskDesc, setTaskDesc] = useState("");
+    const [taskStatus, setTaskStatus] = useState("todo");
     const [creatingTask, setCreatingTask] = useState(false);
 
     const fetchProjects = useCallback(() => {
@@ -56,12 +57,13 @@ export default function DashboardPage() {
         try {
             await axios.post(
                 `/projects/${selectedProject._id}/tasks`,
-                { name: taskName, description: taskDesc },
+                { title: taskName, description: taskDesc, status: taskStatus },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             setShowTaskModal(false);
             setTaskName("");
             setTaskDesc("");
+            setTaskStatus("todo");
             // Optionally refresh tasks here
         } finally {
             setCreatingTask(false);
@@ -157,6 +159,16 @@ export default function DashboardPage() {
                             value={taskDesc}
                             onChange={(e) => setTaskDesc(e.target.value)}
                         />
+                        <select
+                            className="w-full mb-2 p-2 border rounded"
+                            value={taskStatus}
+                            onChange={e => setTaskStatus(e.target.value)}
+                        >
+                            <option value="todo">To Do</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="review">Review</option>
+                            <option value="done">Done</option>
+                        </select>
                         <div className="flex justify-end gap-2">
                             <button
                                 onClick={() => setShowTaskModal(false)}
