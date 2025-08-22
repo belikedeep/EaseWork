@@ -27,7 +27,7 @@ class TaskUpdate(BaseModel):
     priority: Optional[str] = None
 
 @router.post("/projects/{project_id}/tasks", status_code=201)
-def create_task(project_id: str, task: TaskCreate, db=Depends(lambda: __import__("server.main").main.db), current_user=Depends(get_current_user)):
+def create_task(project_id: str, task: TaskCreate, db=Depends(lambda: __import__("main").db), current_user=Depends(get_current_user)):
     task_dict = task.dict()
     task_dict["projectId"] = ObjectId(project_id)
     task_dict["createdAt"] = datetime.datetime.utcnow()
@@ -37,7 +37,7 @@ def create_task(project_id: str, task: TaskCreate, db=Depends(lambda: __import__
     return task_dict
 
 @router.put("/tasks/{task_id}")
-def update_task(task_id: str, update: TaskUpdate, db=Depends(lambda: __import__("server.main").main.db), current_user=Depends(get_current_user)):
+def update_task(task_id: str, update: TaskUpdate, db=Depends(lambda: __import__("main").db), current_user=Depends(get_current_user)):
     task = get_task_collection(db).find_one({"_id": ObjectId(task_id)})
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
@@ -51,7 +51,7 @@ def update_task(task_id: str, update: TaskUpdate, db=Depends(lambda: __import__(
     return task
 
 @router.delete("/tasks/{task_id}", status_code=204)
-def delete_task(task_id: str, db=Depends(lambda: __import__("server.main").main.db), current_user=Depends(get_current_user)):
+def delete_task(task_id: str, db=Depends(lambda: __import__("main").db), current_user=Depends(get_current_user)):
     task = get_task_collection(db).find_one({"_id": ObjectId(task_id)})
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
