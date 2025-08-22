@@ -13,6 +13,16 @@ interface Project {
     createdAt?: string;
 }
 
+interface Task {
+    id: string;
+    title: string;
+    description?: string;
+    status: string;
+    deadline?: string;
+    assignedTo?: string;
+    priority?: string;
+}
+
 export default function DashboardPage() {
     const token = useAuth((s) => s.token);
     const [projects, setProjects] = useState<Project[]>([]);
@@ -24,6 +34,8 @@ export default function DashboardPage() {
     const [taskDesc, setTaskDesc] = useState("");
     const [taskStatus, setTaskStatus] = useState("todo");
     const [creatingTask, setCreatingTask] = useState(false);
+    const [tasks, setTasks] = useState<Task[]>([]);
+    const [loadingTasks, setLoadingTasks] = useState(false);
 
     const fetchProjects = useCallback(() => {
         if (!token) return;
@@ -37,8 +49,23 @@ export default function DashboardPage() {
     }, [token]);
 
     useEffect(() => {
-        fetchProjects();
-    }, [fetchProjects]);
+        if (token) {
+            fetchProjects();
+        }
+    }, [token]);
+
+    // (removed duplicate handleSelectProject)
+
+    const fetchTasks = useCallback((projectId: string) => {
+        if (!token) return;
+        setLoadingTasks(true);
+        axios
+            .get(`/projects/${projectId}/tasks`, {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+            .then((res) => setTasks(res.data))
+            .finally(() => setLoadingTasks(false));
+    }, [token]);
 
     const handleSelectProject = (project: Project) => {
         setSelectedProject(null);
@@ -47,7 +74,10 @@ export default function DashboardPage() {
             .get(`/projects/${project._id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             })
-            .then((res) => setSelectedProject(res.data))
+            .then((res) => {
+                setSelectedProject(res.data);
+                fetchTasks(project._id);
+            })
             .finally(() => setLoadingProject(false));
     };
 
@@ -64,7 +94,7 @@ export default function DashboardPage() {
             setTaskName("");
             setTaskDesc("");
             setTaskStatus("todo");
-            // Optionally refresh tasks here
+            fetchTasks(selectedProject._id);
         } finally {
             setCreatingTask(false);
         }
@@ -138,7 +168,28 @@ export default function DashboardPage() {
                                     ? new Date(selectedProject.createdAt).toLocaleString()
                                     : ""}
                             </div>
-                            {/* Tasks list can be added here */}
+                            <div className="mt-8">
+                                <h2 className="text-xl font-semibold mb-2">Tasks</h2>
+                                {loadingTasks ? (
+                                    <div className="text-gray-500">Loading tasks...</div>
+                                ) : tasks.length === 0 ? (
+                                    <div className="text-gray-400">No tasks for this project.</div>
+                                ) : (
+                                    <ul className="space-y-2">
+                                        {tasks.map((task) => (
+                                            <li key={task.id} className="border rounded p-3 bg-gray-50">
+                                                <div className="flex justify-between items-center">
+                                                    <span className="font-semibold">{task.title}</span>
+                                                    <span className="text-xs px-2 py-1 rounded bg-gray-200">{task.status}</span>
+                                                </div>
+                                                {task.description && (
+                                                    <div className="text-sm text-gray-700 mt-1">{task.description}</div>
+                                                )}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
                         </div>
                     )}
                 </main>

@@ -47,6 +47,16 @@ class Task(BaseModel):
     assignedTo: Optional[PyObjectId] = None
     priority: Optional[str] = None
 
+class TaskResponse(BaseModel):
+    id: str
+    title: str
+    description: Optional[str] = None
+    status: TaskStatus
+    deadline: Optional[str] = None
+    projectId: str
+    assignedTo: Optional[str] = None
+    priority: Optional[str] = None
+
 class Team(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id")
     name: str

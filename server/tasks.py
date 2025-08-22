@@ -7,6 +7,8 @@ import datetime
 
 router = APIRouter()
 
+from models import Task, PyObjectId, TaskResponse
+
 def get_task_collection(db):
     return db["tasks"]
 
@@ -17,6 +19,24 @@ class TaskCreate(BaseModel):
     deadline: Optional[str] = None
     assignedTo: Optional[str] = None
     priority: Optional[str] = None
+
+@router.get("/projects/{project_id}/tasks", response_model=list[TaskResponse])
+def list_tasks(project_id: str, db=Depends(lambda: __import__("main").db), current_user=Depends(get_current_user)):
+    tasks = list(get_task_collection(db).find({"projectId": ObjectId(project_id)}))
+    result = []
+    for task in tasks:
+        task_dict = {
+            "id": str(task.get("_id")),
+            "title": task.get("title", ""),
+            "description": task.get("description", ""),
+            "status": task.get("status", "todo"),
+            "deadline": task.get("deadline"),
+            "projectId": str(task.get("projectId")),
+            "assignedTo": str(task["assignedTo"]) if "assignedTo" in task and task["assignedTo"] else None,
+            "priority": task.get("priority"),
+        }
+        result.append(task_dict)
+    return result
 
 class TaskUpdate(BaseModel):
     title: Optional[str] = None
