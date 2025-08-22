@@ -5,23 +5,7 @@ import Navbar from "../../components/Navbar";
 import { useAuth } from "../../store/auth";
 import axios from "../../utils/axios";
 
-interface Project {
-    _id: string;
-    name: string;
-    description?: string;
-    members?: string[];
-    createdAt?: string;
-}
-
-interface Task {
-    id: string;
-    title: string;
-    description?: string;
-    status: string;
-    deadline?: string;
-    assignedTo?: string;
-    priority?: string;
-}
+import type { Project, Task } from "../../types/types";
 
 export default function DashboardPage() {
     const token = useAuth((s) => s.token);
