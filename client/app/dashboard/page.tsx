@@ -6,11 +6,13 @@ import { useAuth } from "../../store/auth";
 import axios from "../../utils/axios";
 
 import type { Project, Task } from "../../types/types";
+import SettingsPage from "./settings";
 
 export default function DashboardPage() {
     const token = useAuth((s) => s.token);
     const [projects, setProjects] = useState<Project[]>([]);
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+    const [showSettings, setShowSettings] = useState(false);
     const [loadingProjects, setLoadingProjects] = useState(true);
     const [loadingProject, setLoadingProject] = useState(false);
     const [showTaskModal, setShowTaskModal] = useState(false);
@@ -89,7 +91,10 @@ export default function DashboardPage() {
                 <button
                     className={`text-left w-full px-3 py-2 rounded hover:bg-gray-700 font-semibold mb-2 ${!selectedProject ? "bg-gray-700" : ""
                         }`}
-                    onClick={() => setSelectedProject(null)}
+                    onClick={() => {
+                        setShowSettings(false);
+                        setSelectedProject(null);
+                    }}
                 >
                     Dashboard
                 </button>
@@ -112,6 +117,15 @@ export default function DashboardPage() {
                         </button>
                     ))
                 )}
+                <button
+                    className={`text-left w-full px-3 py-2 rounded hover:bg-gray-700 font-semibold mt-4 ${showSettings ? "bg-gray-700" : ""}`}
+                    onClick={() => {
+                        setShowSettings(true);
+                        setSelectedProject(null);
+                    }}
+                >
+                    Settings
+                </button>
                 <div className="mt-auto text-xs text-gray-400">
                     &copy; {new Date().getFullYear()} EaseWork
                 </div>
@@ -119,7 +133,9 @@ export default function DashboardPage() {
             <div className="flex flex-col flex-1">
                 <Navbar onProjectCreated={fetchProjects} />
                 <main className="flex-1 p-8">
-                    {!selectedProject ? (
+                    {showSettings ? (
+                        <SettingsPage />
+                    ) : !selectedProject ? (
                         <div>
                             <button className="bg-gray-900 text-white px-4 py-2 rounded mb-4 font-semibold">
                                 Dashboard
