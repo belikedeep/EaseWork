@@ -172,22 +172,67 @@ export default function DashboardPage() {
                                 <h2 className="text-xl font-semibold mb-2">Tasks</h2>
                                 {loadingTasks ? (
                                     <div className="text-gray-500">Loading tasks...</div>
-                                ) : tasks.length === 0 ? (
-                                    <div className="text-gray-400">No tasks for this project.</div>
                                 ) : (
-                                    <ul className="space-y-2">
-                                        {tasks.map((task) => (
-                                            <li key={task.id} className="border rounded p-3 bg-gray-50">
-                                                <div className="flex justify-between items-center">
-                                                    <span className="font-semibold">{task.title}</span>
-                                                    <span className="text-xs px-2 py-1 rounded bg-gray-200">{task.status}</span>
+                                    <div className="flex gap-4 w-full">
+                                        {[
+                                            { label: "TODO", value: "todo" },
+                                            { label: "IN PROGRESS", value: "in_progress" },
+                                            { label: "REVIEW", value: "review" },
+                                            { label: "DONE", value: "done" },
+                                        ].map((col) => (
+                                            <div
+                                                key={col.value}
+                                                className="flex-1 bg-gray-100 rounded p-2 min-h-[200px] flex flex-col"
+                                                onDragOver={e => e.preventDefault()}
+                                                onDrop={e => {
+                                                    const taskId = e.dataTransfer.getData("text/plain");
+                                                    const task = tasks.find(t => t.id === taskId);
+                                                    if (task && task.status !== col.value) {
+                                                        // Optimistically update UI
+                                                        setTasks(ts =>
+                                                            ts.map(t =>
+                                                                t.id === taskId ? { ...t, status: col.value } : t
+                                                            )
+                                                        );
+                                                        // Update backend
+                                                        axios.put(
+                                                            `/tasks/${taskId}`,
+                                                            { status: col.value },
+                                                            { headers: { Authorization: `Bearer ${token}` } }
+                                                        ).then(() => fetchTasks(selectedProject._id));
+                                                    }
+                                                }}
+                                            >
+                                                <div className="font-bold text-center mb-2">{col.label}</div>
+                                                <div className="flex-1 flex flex-col gap-2">
+                                                    {tasks.filter(t => t.status === col.value).length === 0 ? (
+                                                        <div className="text-gray-400 text-xs text-center">No tasks</div>
+                                                    ) : (
+                                                        tasks
+                                                            .filter(t => t.status === col.value)
+                                                            .map(task => (
+                                                                <div
+                                                                    key={task.id}
+                                                                    className="border rounded p-3 bg-white shadow cursor-move"
+                                                                    draggable
+                                                                    onDragStart={e => {
+                                                                        e.dataTransfer.setData("text/plain", task.id);
+                                                                    }}
+                                                                >
+                                                                    <div className="flex justify-between items-center">
+                                                                        <span className="font-semibold">{task.title}</span>
+                                                                        <span className="text-xs px-2 py-1 rounded bg-gray-200">{task.status.replace("_", " ").toUpperCase()}</span>
+                                                                    </div>
+                                                                    {task.description && (
+                                                                        <div className="text-sm text-gray-700 mt-1">{task.description}</div>
+                                                                    )}
+                                                                </div>
+                                                            ))
+                                                    )}
                                                 </div>
-                                                {task.description && (
-                                                    <div className="text-sm text-gray-700 mt-1">{task.description}</div>
-                                                )}
-                                            </li>
+                                            </div>
                                         ))}
-                                    </ul>
+                                    </div>
                                 )}
                             </div>
                         </div>
