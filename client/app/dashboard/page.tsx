@@ -105,16 +105,21 @@ export default function DashboardPage() {
                     <div className="text-xs text-gray-400">No projects</div>
                 ) : (
                     projects.map((project) => (
-                        <button
+                        <a
                             key={project._id}
-                            className={`text-left w-full px-3 py-2 rounded bg-transparent text-[var(--sidebar-primary-foreground)] hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)] ${selectedProject && selectedProject._id === project._id
+                            href={`/dashboard/projects/${project._id}`}
+                            className={`block text-left w-full px-3 py-2 rounded bg-transparent text-[var(--sidebar-primary-foreground)] hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)] ${selectedProject && selectedProject._id === project._id
                                 ? "bg-[var(--sidebar-accent)] text-[var(--sidebar-accent-foreground)]"
                                 : ""
                                 }`}
-                            onClick={() => handleSelectProject(project)}
+                            onClick={e => {
+                                e.preventDefault();
+                                handleSelectProject(project);
+                                window.history.pushState({}, "", `/dashboard/projects/${project._id}`);
+                            }}
                         >
                             {project.name}
-                        </button>
+                        </a>
                     ))
                 )}
                 <button
