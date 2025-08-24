@@ -86,11 +86,11 @@ export default function DashboardPage() {
     };
 
     return (
-        <div className="flex min-h-screen">
-            <div className="w-64 bg-gray-800 text-white flex flex-col py-6 px-4 gap-4">
+        <div className="flex min-h-screen dark">
+            <div className="w-64 flex flex-col py-6 px-4 gap-4 bg-[var(--sidebar)] text-[var(--sidebar-foreground)]">
+                <div className="text-2xl font-bold mb-6 text-[var(--sidebar-primary-foreground)]">EaseWork</div>
                 <button
-                    className={`text-left w-full px-3 py-2 rounded hover:bg-gray-700 font-semibold mb-2 ${!selectedProject ? "bg-gray-700" : ""
-                        }`}
+                    className={`text-left w-full px-3 py-2 rounded font-semibold mb-2 bg-transparent text-[var(--sidebar-primary-foreground)] hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)] ${!selectedProject ? "bg-[var(--sidebar-accent)] text-[var(--sidebar-accent-foreground)]" : ""}`}
                     onClick={() => {
                         setShowSettings(false);
                         setSelectedProject(null);
@@ -107,8 +107,8 @@ export default function DashboardPage() {
                     projects.map((project) => (
                         <button
                             key={project._id}
-                            className={`text-left w-full px-3 py-2 rounded hover:bg-gray-700 ${selectedProject && selectedProject._id === project._id
-                                ? "bg-gray-700"
+                            className={`text-left w-full px-3 py-2 rounded bg-transparent text-[var(--sidebar-primary-foreground)] hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)] ${selectedProject && selectedProject._id === project._id
+                                ? "bg-[var(--sidebar-accent)] text-[var(--sidebar-accent-foreground)]"
                                 : ""
                                 }`}
                             onClick={() => handleSelectProject(project)}
@@ -118,7 +118,7 @@ export default function DashboardPage() {
                     ))
                 )}
                 <button
-                    className={`text-left w-full px-3 py-2 rounded hover:bg-gray-700 font-semibold mt-4 ${showSettings ? "bg-gray-700" : ""}`}
+                    className={`text-left w-full px-3 py-2 rounded font-semibold mt-4 bg-transparent text-[var(--sidebar-primary-foreground)] hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)] ${showSettings ? "bg-[var(--sidebar-accent)] text-[var(--sidebar-accent-foreground)]" : ""}`}
                     onClick={() => {
                         setShowSettings(true);
                         setSelectedProject(null);
@@ -131,7 +131,7 @@ export default function DashboardPage() {
                 </div>
             </div>
             <div className="flex flex-col flex-1">
-                <Navbar onProjectCreated={fetchProjects} />
+                <Navbar />
                 <main className="flex-1 p-8">
                     {showSettings ? (
                         <SettingsPage />
