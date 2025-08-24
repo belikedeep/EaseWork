@@ -4,9 +4,13 @@ import { useEffect, useState, useCallback } from "react";
 import Navbar from "../../components/Navbar";
 import { useAuth } from "../../store/auth";
 import axios from "../../utils/axios";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 import type { Project, Task } from "../../types/types";
 import SettingsPage from "./settings";
+import { usePathname } from "next/navigation";
 
 export default function DashboardPage() {
     const token = useAuth((s) => s.token);
@@ -23,6 +27,8 @@ export default function DashboardPage() {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [loadingTasks, setLoadingTasks] = useState(false);
 
+    const pathname = usePathname();
+
     const fetchProjects = useCallback(() => {
         if (!token) return;
         setLoadingProjects(true);
@@ -34,13 +40,30 @@ export default function DashboardPage() {
             .finally(() => setLoadingProjects(false));
     }, [token]);
 
+    // On mount, if URL is /dashboard/projects/[projectId], fetch and select that project
     useEffect(() => {
-        if (token) {
-            fetchProjects();
-        }
+        if (!token) return;
+        fetchProjects();
     }, [token]);
 
-    // (removed duplicate handleSelectProject)
+    useEffect(() => {
+        if (!token || !pathname.startsWith("/dashboard/projects/") || loadingProjects) return;
+        const projectId = pathname.split("/dashboard/projects/")[1];
+        if (projectId) {
+            setLoadingProject(true);
+            axios
+                .get(`/projects/${projectId}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                })
+                .then((res) => {
+                    setSelectedProject(res.data);
+                    fetchTasks(projectId);
+                })
+                .catch(() => setSelectedProject(null))
+                .finally(() => setLoadingProject(false));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [token, pathname, loadingProjects]);
 
     const fetchTasks = useCallback((projectId: string) => {
         if (!token) return;
@@ -98,7 +121,10 @@ export default function DashboardPage() {
                 >
                     Dashboard
                 </button>
-                <h2 className="text-lg font-bold mb-2">Projects</h2>
+                <div className="flex items-center justify-between mb-2">
+                    <h2 className="text-lg font-bold">Projects</h2>
+                    <ProjectCreateDialog onCreated={fetchProjects} />
+                </div>
                 {loadingProjects ? (
                     <div className="text-xs text-gray-400">Loading...</div>
                 ) : projects.length === 0 ? (
@@ -289,5 +315,67 @@ export default function DashboardPage() {
                 </div>
             )}
         </div>
+    );
+}
+
+// ProjectCreateDialog component
+function ProjectCreateDialog({ onCreated }: { onCreated: () => void }) {
+    const token = useAuth((s) => s.token);
+    const [open, setOpen] = useState(false);
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const handleCreate = async () => {
+        if (!name) return;
+        setLoading(true);
+        try {
+            await axios.post(
+                "/projects",
+                { name, description },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setOpen(false);
+            setName("");
+            setDescription("");
+            onCreated();
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button variant="outline" size="icon" className="ml-2">
+                    <Plus className="w-4 h-4" />
+                </Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Create New Project</DialogTitle>
+                </DialogHeader>
+                <input
+                    className="w-full mb-2 p-2 border rounded"
+                    placeholder="Project Name"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                />
+                <textarea
+                    className="w-full mb-2 p-2 border rounded"
+                    placeholder="Description"
+                    value={description}
+                    onChange={e => setDescription(e.target.value)}
+                />
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleCreate} disabled={loading || !name}>
+                        {loading ? "Creating..." : "Create"}
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }
