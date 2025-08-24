@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "../utils/axios";
 import { useAuth } from "../store/auth";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -28,32 +30,27 @@ export default function LoginPage() {
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
       <h1 className="text-2xl font-bold mb-4">Login</h1>
       <form className="flex flex-col gap-4 w-full max-w-xs" onSubmit={handleSubmit}>
-        <input
+        <Input
           type="email"
           placeholder="Email"
-          className="border rounded px-3 py-2"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <input
+        <Input
           type="password"
           placeholder="Password"
-          className="border rounded px-3 py-2"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button
-          type="submit"
-          className="bg-blue-600 text-white rounded px-3 py-2 font-semibold"
-        >
+        <Button type="submit">
           Login
-        </button>
+        </Button>
         {error && <div className="text-red-600 text-sm">{error}</div>}
       </form>
       <p className="mt-4 text-sm">
-        Don't have an account?{" "}
+        Don&apos;t have an account?{" "}
         <Link href="/signup" className="text-blue-600 underline">
           Sign Up
         </Link>

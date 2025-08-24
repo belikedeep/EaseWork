@@ -3,6 +3,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/utils/axios";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function SignupPage() {
     const [name, setName] = useState("");
@@ -29,36 +31,30 @@ export default function SignupPage() {
         <div className="flex flex-col items-center justify-center min-h-screen p-4">
             <h1 className="text-2xl font-bold mb-4">Sign Up</h1>
             <form className="flex flex-col gap-4 w-full max-w-xs" onSubmit={handleSubmit}>
-                <input
+                <Input
                     type="text"
                     placeholder="Name"
-                    className="border rounded px-3 py-2"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
                 />
-                <input
+                <Input
                     type="email"
                     placeholder="Email"
-                    className="border rounded px-3 py-2"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                 />
-                <input
+                <Input
                     type="password"
                     placeholder="Password"
-                    className="border rounded px-3 py-2"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
-                <button
-                    type="submit"
-                    className="bg-blue-600 text-white rounded px-3 py-2 font-semibold"
-                >
+                <Button type="submit">
                     Sign Up
-                </button>
+                </Button>
                 {error && <div className="text-red-600 text-sm">{error}</div>}
                 {success && <div className="text-green-600 text-sm">{success}</div>}
             </form>
