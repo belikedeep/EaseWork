@@ -1,10 +1,11 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/utils/axios";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/store/auth";
 
 export default function SignupPage() {
     const [name, setName] = useState("");
@@ -13,6 +14,16 @@ export default function SignupPage() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const router = useRouter();
+    const token = useAuth((s) => s.token);
+
+    // Redirect if already logged in
+    useEffect(() => {
+        if (token && router) {
+            router.replace("/dashboard");
+        }
+    }, [token, router]);
+    // Prevent rendering if token exists and url is /dashboard
+    if (token && typeof window !== "undefined" && window.location.pathname === "/dashboard") return null;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

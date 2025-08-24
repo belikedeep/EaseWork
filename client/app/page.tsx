@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import api from "../utils/axios";
 import { useAuth } from "../store/auth";
@@ -12,7 +12,17 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const setToken = useAuth((s) => s.setToken);
+  const token = useAuth((s) => s.token);
   const router = useRouter();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (token && router) {
+      router.replace("/dashboard");
+    }
+  }, [token, router]);
+  // Prevent rendering if token exists and url is /dashboard
+  if (token && typeof window !== "undefined" && window.location.pathname === "/dashboard") return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
