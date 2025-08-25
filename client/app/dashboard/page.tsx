@@ -122,7 +122,7 @@ export default function DashboardPage() {
             />
             <div className="flex flex-col flex-1">
                 <Navbar />
-                <main className="flex-1 p-8">
+                <main className="flex-1">
                     {showSettings ? (
                         <SettingsPage />
                     ) : !selectedProject ? (
