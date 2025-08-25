@@ -74,6 +74,13 @@ export default function Sidebar({
             <div className="mt-auto text-xs text-gray-400">
                 &copy; {new Date().getFullYear()} EaseWork
             </div>
+            {/* Dummy navigation items */}
+            <div className="mt-8 flex flex-col gap-2">
+                <a className="px-3 py-2 rounded hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)] text-[var(--sidebar-primary-foreground)] cursor-pointer" href="#">Overview</a>
+                <a className="px-3 py-2 rounded hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)] text-[var(--sidebar-primary-foreground)] cursor-pointer" href="#">Calendar</a>
+                <a className="px-3 py-2 rounded hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)] text-[var(--sidebar-primary-foreground)] cursor-pointer" href="#">Files</a>
+                <a className="px-3 py-2 rounded hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)] text-[var(--sidebar-primary-foreground)] cursor-pointer" href="#">Team Chat</a>
+            </div>
         </div>
     );
 }

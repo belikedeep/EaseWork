@@ -109,7 +109,7 @@ export default function DashboardPage() {
     }, [token, pathname, loadingProjects, fetchTasks]);
 
     return (
-        <div className="flex min-h-screen dark">
+        <div className="flex min-h-screen max-h-screen h-screen overflow-hidden dark">
             <Sidebar
                 projects={projects}
                 loadingProjects={loadingProjects}
@@ -120,9 +120,9 @@ export default function DashboardPage() {
                 fetchProjects={fetchProjects}
                 handleSelectProject={handleSelectProject}
             />
-            <div className="flex flex-col flex-1">
+            <div className="flex flex-col flex-1 max-h-screen h-screen overflow-hidden">
                 <Navbar />
-                <main className="flex-1">
+                <main className="flex-1 overflow-auto">
                     {showSettings ? (
                         <SettingsPage />
                     ) : !selectedProject ? (
