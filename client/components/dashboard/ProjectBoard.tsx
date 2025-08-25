@@ -30,6 +30,7 @@ interface ProjectBoardProps {
     setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
     fetchTasks: (projectId: string) => void;
     token: string | null;
+    onProjectDeleted?: () => void;
 }
 
 export default function ProjectBoard({
@@ -41,6 +42,7 @@ export default function ProjectBoard({
     setTasks,
     fetchTasks,
     token,
+    onProjectDeleted,
 }: ProjectBoardProps) {
     const router = useRouter();
     const [deleting, setDeleting] = useState(false);
@@ -59,8 +61,7 @@ export default function ProjectBoard({
             await axios.delete(`/projects/${selectedProject._id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            router.push("/dashboard");
-            // Optionally, trigger a refresh of the project list if needed
+            window.location.href = "/dashboard";
         } catch (err) {
             alert("Failed to delete project.");
         } finally {

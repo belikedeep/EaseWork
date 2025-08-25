@@ -143,6 +143,10 @@ export default function DashboardPage() {
                             setTasks={setTasks}
                             fetchTasks={fetchTasks}
                             token={token}
+                            onProjectDeleted={() => {
+                                setSelectedProject(null);
+                                setShowSettings(false);
+                            }}
                         />
                     )}
                 </main>
