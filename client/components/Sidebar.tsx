@@ -8,8 +8,14 @@ import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Menu, LayoutDashboard, Folder, PlusCircle } from "lucide-react";
 
+type Project = {
+    _id: string;
+    name: string;
+    // Add other fields if needed
+};
+
 export default function Sidebar() {
-    const [projects, setProjects] = useState<any[]>([]);
+    const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
     const token = useAuth((s) => s.token);
 

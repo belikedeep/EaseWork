@@ -7,6 +7,18 @@ import { useAuth } from "../store/auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
+function isAxiosError(error: unknown): error is { response?: { data?: { detail?: string } } } {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "response" in error &&
+    typeof (error as { response?: unknown }).response === "object" &&
+    (error as { response?: unknown }).response !== null &&
+    "data" in (error as { response?: { data?: unknown } }).response! &&
+    typeof ((error as { response?: { data?: unknown } }).response as { data?: unknown }).data === "object"
+  );
+}
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,8 +43,12 @@ export default function LoginPage() {
       const res = await api.post("/login", { email, password });
       setToken(res.data.access_token);
       router.push("/dashboard");
-    } catch (err: any) {
-      setError(err?.response?.data?.detail || "Login failed");
+    } catch (err: unknown) {
+      if (isAxiosError(err) && err.response?.data?.detail) {
+        setError(err.response.data.detail);
+      } else {
+        setError("Login failed");
+      }
     }
   };
 

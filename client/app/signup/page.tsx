@@ -7,6 +7,18 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/store/auth";
 
+function isAxiosError(error: unknown): error is { response?: { data?: { detail?: string } } } {
+    return (
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error &&
+        typeof (error as { response?: unknown }).response === "object" &&
+        (error as { response?: unknown }).response !== null &&
+        "data" in (error as { response?: { data?: unknown } }).response! &&
+        typeof ((error as { response?: { data?: unknown } }).response as { data?: unknown }).data === "object"
+    );
+}
+
 export default function SignupPage() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -33,8 +45,12 @@ export default function SignupPage() {
             await api.post("/signup", { name, email, password });
             setSuccess("Signup successful! Please login.");
             setTimeout(() => router.push("/"), 1200);
-        } catch (err: any) {
-            setError(err?.response?.data?.detail || "Signup failed");
+        } catch (err: unknown) {
+            if (isAxiosError(err) && err.response?.data?.detail) {
+                setError(err.response.data.detail);
+            } else {
+                setError("Signup failed");
+            }
         }
     };
 
