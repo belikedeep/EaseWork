@@ -15,12 +15,12 @@ export default function Navbar() {
     };
 
     return (
-        <nav className="w-full h-14 bg-background border-b flex items-center justify-end px-6 shadow-sm">
-            <Menubar className="bg-background border-none shadow-none">
+        <nav className="w-full h-14 bg-white border-b border-gray-200 flex items-center justify-end px-6 shadow-sm">
+            <Menubar className="bg-white border-none shadow-none">
                 <MenubarMenu>
                     <MenubarTrigger>
                         <Avatar>
-                            <AvatarFallback className="bg-white text-black">U</AvatarFallback>
+                            <AvatarFallback className="bg-blue-100 text-blue-700">U</AvatarFallback>
                         </Avatar>
                     </MenubarTrigger>
                     <MenubarContent align="end">

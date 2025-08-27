@@ -109,7 +109,7 @@ export default function DashboardPage() {
     }, [token, pathname, loadingProjects, fetchTasks]);
 
     return (
-        <div className="flex min-h-screen max-h-screen h-screen overflow-hidden dark">
+        <div className="flex min-h-screen max-h-screen h-screen overflow-hidden">
             <Sidebar
                 projects={projects}
                 loadingProjects={loadingProjects}

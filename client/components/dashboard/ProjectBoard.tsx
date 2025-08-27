@@ -81,7 +81,7 @@ export default function ProjectBoard({
     }
 
     return (
-        <div className="bg-background text-foreground min-h-screen p-6">
+        <div className="bg-white text-gray-900 min-h-screen p-6">
             {/* Header Section */}
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -110,16 +110,16 @@ export default function ProjectBoard({
             </div>
 
             {/* Project Meta Information */}
-            <div className="flex gap-6 mb-8 text-xs text-muted-foreground">
+            <div className="flex gap-6 mb-8 text-xs text-gray-500">
                 {selectedProject.members && selectedProject.members.length > 0 && (
                     <div>
-                        <span className="text-muted-foreground">Members: </span>
+                        <span className="text-gray-500">Members: </span>
                         <span>{selectedProject.members.join(", ")}</span>
                     </div>
                 )}
                 {selectedProject.createdAt && (
                     <div>
-                        <span className="text-muted-foreground">Created: </span>
+                        <span className="text-gray-500">Created: </span>
                         <span>{new Date(selectedProject.createdAt).toLocaleDateString()}</span>
                     </div>
                 )}
@@ -129,19 +129,19 @@ export default function ProjectBoard({
             <div className="mt-6">
                 {loadingTasks ? (
                     <div className="flex items-center justify-center h-32">
-                        <div className="text-muted-foreground text-sm">Loading tasks...</div>
+                        <div className="text-gray-400 text-sm">Loading tasks...</div>
                     </div>
                 ) : (
                     <div className="grid grid-cols-4 gap-4">
                         {[
-                            { label: "Todo", value: "todo", color: "border-border" },
-                            { label: "In Progress", value: "in_progress", color: "border-chart-1" },
-                            { label: "Review", value: "review", color: "border-chart-3" },
-                            { label: "Done", value: "done", color: "border-chart-2" },
+                            { label: "Todo", value: "todo", color: "border-gray-300" },
+                            { label: "In Progress", value: "in_progress", color: "border-blue-400" },
+                            { label: "Review", value: "review", color: "border-yellow-400" },
+                            { label: "Done", value: "done", color: "border-green-400" },
                         ].map((col) => (
                             <div
                                 key={col.value}
-                                className={`bg-card rounded-lg border-t-2 ${col.color} border border-border min-h-[400px] flex flex-col`}
+                                className={`bg-gray-50 rounded-lg border-t-2 ${col.color} border border-gray-200 min-h-[400px] flex flex-col`}
                                 onDragOver={e => e.preventDefault()}
                                 onDrop={e => {
                                     const taskId = e.dataTransfer.getData("text/plain");
@@ -163,10 +163,10 @@ export default function ProjectBoard({
                                 }}
                             >
                                 {/* Column Header */}
-                                <div className="p-4 border-b border-border">
+                                <div className="p-4 border-b border-gray-200">
                                     <div className="flex items-center justify-between">
-                                        <h3 className="text-sm font-medium text-card-foreground">{col.label}</h3>
-                                        <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
+                                        <h3 className="text-sm font-medium text-blue-800">{col.label}</h3>
+                                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
                                             {tasks.filter(t => t.status === col.value).length}
                                         </span>
                                     </div>
@@ -175,7 +175,7 @@ export default function ProjectBoard({
                                 {/* Column Content */}
                                 <div className="flex-1 p-3 space-y-3">
                                     {tasks.filter(t => t.status === col.value).length === 0 ? (
-                                        <div className="text-muted-foreground text-xs text-center mt-8 italic">
+                                        <div className="text-gray-400 text-xs text-center mt-8 italic">
                                             No tasks yet
                                         </div>
                                     ) : (
@@ -184,17 +184,17 @@ export default function ProjectBoard({
                                             .map(task => (
                                                 <div
                                                     key={task.id}
-                                                    className="bg-background border border-border rounded-lg p-3 cursor-move hover:bg-accent/50 transition-colors duration-150"
+                                                    className="bg-white border border-gray-200 rounded-lg p-3 cursor-move hover:bg-blue-50 transition-colors duration-150"
                                                     draggable
                                                     onDragStart={e => {
                                                         e.dataTransfer.setData("text/plain", task.id);
                                                     }}
                                                 >
-                                                    <div className="text-sm font-medium text-foreground mb-1">
+                                                    <div className="text-sm font-medium text-blue-900 mb-1">
                                                         {task.title}
                                                     </div>
                                                     {task.description && (
-                                                        <div className="text-xs text-muted-foreground line-clamp-2">
+                                                        <div className="text-xs text-gray-500 line-clamp-2">
                                                             {task.description}
                                                         </div>
                                                     )}
